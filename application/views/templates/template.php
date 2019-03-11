@@ -6,8 +6,10 @@ if(!$this->session->menu) {
 }
 
 $menu = $this->session->menu;
-$perm = $this->session->perm;
-$perm1 = $this->session->perm;
+//$perm = $this->session->perm;
+$perm = $this->session->permit;
+$perm1=$this->session->permit;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,8 +63,8 @@ $perm1 = $this->session->perm;
         //$admin_id=$login['admin_id'];
 $array = array();
       foreach ($perm1 as $per) {
-          if (  $per->active == "yes") {
-              array_push($array, $per->permission_ID);
+          if (  $per['active'] == "yes") {
+              array_push($array, $per['permission_ID']);
 
 
               // $this->menu_m->get(array('link' => ))
@@ -97,7 +99,7 @@ $array = array();
           <ul class="nav nav-sidebar">
               <?php  foreach ($menu as $m) {
                   foreach ($perm as $p) {
-                      if ($m->permission_ID == $p->permission_ID && $p->active == "yes" && $m->parent_ID == "" && $m->subparent_ID == "") {?>
+                      if ($m->permission_ID == $p['permission_ID'] && $p['active'] == "yes" && $m->parent_ID == "" && $m->subparent_ID == "") {?>
                      <li class="<?php if($m->child_status == "Y"){ echo "nav-parent";} if($m->link ==$url.'/'.$page || $url==$m->link || $url==$m->menu_name || $m->menu_name =='Settings'){ echo " nav-active active"; } ?>">
                                <a href='<?php if($m->child_status == "Y"){ echo "#";}else{echo site_url().$m->link;}?>' ><i class="<?php echo $m->icon; ?>"></i><span><?php echo $m->menu_name; ?></span>
                                 <?php if($m->child_status == "Y"){ ?>  <span class="fa arrow"></span> <?php } ?>
@@ -105,7 +107,7 @@ $array = array();
                               <?php if($m->child_status == "Y"){  ?>
                                   <ul class="children collapse">
                                       <?php  foreach ($menu as $me) {
-                                      if ($me->parent_ID != "" && $me->parent_ID == $m->menu_ID && $p->active == "yes" && in_array($me->permission_ID,$array) ) { ?>
+                                      if ($me->parent_ID != "" && $me->parent_ID == $m->menu_ID && $p['active'] == "yes" && in_array($me->permission_ID,$array) ) { ?>
                                       <?php if($me->show_menu==1){?>
                                       <li <?php if($me->link ==$url.'/'.$page){echo 'class="active"';} ?>><a href='<?php if($me->subcat_status == "Y") { echo "javascript:;"; }else{echo site_url().$me->link;} ?>'><?php echo $me->menu_name; ?></a>
                                           <?php if($me->subcat_status == "Y"){  ?>
