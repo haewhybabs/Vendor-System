@@ -22,16 +22,68 @@ class MY_Controller extends CI_Controller {
             $role = $this->session->roleID;
             $perm = $this->Permission_m->get_modules_with_permission($role);
 
+            $user_id=$this->session->userdata['cms_logged_in']['user_id'];
+            $get_roles=$this->Permission_m->get_user_role($user_id);
+
+            foreach($get_roles as $rol){
+
+                $permis[] = $this->Permission_m->get_permission_by_role($rol->role_ID);
+
+            }
+            
+            
+
+
+
+            
+             
+            $result = [];
+            foreach($permis as $arr)
+            {
+                $result = array_merge($result , $arr);
+            }
+            
+            $permo=array();
+            foreach($result as $per){
+                if(!in_array($per->permission_ID,$permo)){
+                    $permo[]=$per->permission_ID;
+                }
+                else{
+                    
+                }
+                
+            }
+
+            foreach($permo as $p=>$value ){
+                $permission=$this->Permission_m->get_active($value);
+                $data1=array(
+                    'permission_ID'=>$value,
+                    'active'=>$permission->active,
+                    'name'=>$permission->name,
+                    'desc'=>$permission->desc,
+                );
+
+                $data[]=$data1;
+            }
 
             $this->session->menu = $menu;
             $this->session->perm = $perm;
-// var_dump($perm);
+            $this->session->permit=$data;
+
+            
+
+
+            
+        
+//  var_dump($data);
+//  die;
             $array = array();
+            $perm=$data;
 
 
                 foreach ($perm as $p) {
-                    if (  $p->active == "yes") {
-                        array_push($array, $p->permission_ID);
+                    if (  $p['active'] == "yes") {
+                        array_push($array, $p['permission_ID']);
 
 
                         // $this->Menu_m->get(array('link' => ))
@@ -76,7 +128,7 @@ class MY_Controller extends CI_Controller {
             // var_dump($menu);
             $parray = array();
             foreach ($perm as $pe) {
-                array_push($parray, $pe->name);
+                array_push($parray, $pe['name']);
 
             }
             $pageauth = array();
@@ -93,11 +145,11 @@ class MY_Controller extends CI_Controller {
                     // echo $exactperm->name;
                     // var_dump($exactperm);
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -116,11 +168,11 @@ class MY_Controller extends CI_Controller {
                         $currlink = $this->Menu_m->getm(array('menu_ID' => $parent));
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -151,8 +203,8 @@ class MY_Controller extends CI_Controller {
                         $permission = $this->Permission_m->get_modules_with_permission($role);
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -171,11 +223,11 @@ class MY_Controller extends CI_Controller {
                         $currlink = $this->Menu_m->getm(array('menu_ID' => $parent));
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -202,11 +254,11 @@ class MY_Controller extends CI_Controller {
                     //var_dump($currlink);
                     $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -225,11 +277,11 @@ class MY_Controller extends CI_Controller {
                         $currlink = $this->Menu_m->getm(array('menu_ID' => $parent));
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -256,11 +308,11 @@ class MY_Controller extends CI_Controller {
                     //var_dump($currlink);
                     $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -280,11 +332,11 @@ class MY_Controller extends CI_Controller {
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
 
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -312,11 +364,11 @@ class MY_Controller extends CI_Controller {
                     $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
 
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -336,11 +388,11 @@ class MY_Controller extends CI_Controller {
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
 
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -367,11 +419,11 @@ class MY_Controller extends CI_Controller {
                     //var_dump($currlink);
                     $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -390,11 +442,11 @@ class MY_Controller extends CI_Controller {
                         $currlink = $this->Menu_m->getm(array('menu_ID' => $parent));
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -421,11 +473,11 @@ class MY_Controller extends CI_Controller {
                     $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                     //var_dump($currlink);
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -444,11 +496,11 @@ class MY_Controller extends CI_Controller {
                         $currlink = $this->Menu_m->getm(array('menu_ID' => $parent));
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -476,11 +528,11 @@ class MY_Controller extends CI_Controller {
                     $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
 
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -500,11 +552,11 @@ class MY_Controller extends CI_Controller {
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
 
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -532,11 +584,11 @@ class MY_Controller extends CI_Controller {
                     $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
 
                     if ($currlink[0]->parent_ID == "" && $currlink[0]->subparent_ID == "") {
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -556,11 +608,11 @@ class MY_Controller extends CI_Controller {
                         $exactperm = $this->Permission_m->get_by_id($currlink[0]->permission_ID);
 
                         //  var_dump($currlink);
-                        $permission = $this->Permission_m->get_modules_with_permission($role);
+                        $permission = $perm;
                         //  var_dump($permission);
                         foreach($permission as $per) {
-                            if ($per->active == "yes") {
-                                array_push($pageauth, $per->name);
+                            if ($per['active'] == "yes") {
+                                array_push($pageauth, $per['name']);
 
                             }
                         }
@@ -583,6 +635,8 @@ class MY_Controller extends CI_Controller {
         }
 
     }
+
+   
 
 
 }
